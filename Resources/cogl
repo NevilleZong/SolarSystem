@@ -1,0 +1,79 @@
+#!/bin/bash
+#
+# Debian-friendly cogl script for running/compiling coursework/labs
+#programs
+# at home
+#
+# NOTE: This is specific to the COMP27112 course at The University of
+#Manchester
+#
+# Assumes you have
+#	  freeglut3
+#	  freeglut3-dev
+#	  libgl1-mesa-dev
+#	  libglu1-mesa
+#	  libglu1-mesa-dev
+# installed
+#
+# NOTE: I'm not sure which of those are actually needed, but it
+#compiles fine
+#       on my machine with those installed.
+#
+# Author:      Karl Sutt
+# Updated by Bobby McCann
+# Last edited: 2017-02-07
+# License:     GPLv2
+
+# Prints the usage message
+function usage
+{
+	echo "Usage: cogl <filename.c> <outfile>"
+	echo "       If you omit the <outfile> then a.out will be the
+	default"
+}
+
+# INFILE is the source file
+# OUTFILE is the target file
+# LIBRARYPATH is the path to libraries on user's machine
+INFILE=$1
+OUTFILE=${INFILE%.*}
+# Change this if your include path is different
+LIBRARYPATH=/usr/include
+
+# If we have no arguments, then print usage message and exit
+if [ $# -eq 0 ]; then
+   usage
+   exit 1
+else
+	# If the second argument is provided, then use that instead of a.out
+	if [ "$2" != "" ]; then
+	   OUTFILE=$2
+	   fi
+
+	   # Let's make it happen!
+	   #       March is set to native here, which means you should recompile
+	   #       this in the labs because the processor architecture might be
+	   #       different from yours at home.
+	   #       Additionally, change -m64 to -m32 if you're on a 32 bit machine
+	   #       (or get a new computer).
+	   gcc \
+       $INFILE \
+       -o $OUTFILE \
+	   -O3 \
+	   -fomit-frame-pointer \
+	   -march=native \
+	   -m64 \
+	   -Wall \
+	   -pipe \
+	   -DFX \
+	   -DXMESA \
+	   -lGL \
+	   -lGLU \
+	   -lglut \
+	   -lX11 \
+	   -lm \
+	   -g
+
+	   # Exit cleanly
+	   exit
+fi
